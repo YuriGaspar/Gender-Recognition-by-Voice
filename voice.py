@@ -66,7 +66,7 @@ cm = confusion_matrix(y_test, y_pred)
 
 #------- Calculating the Performance of Logistic Regression
 from sklearn import metrics
-print( "Accuracy: {}".format(metrics.accuracy_score(y_test,y_pred)) ) #0.971608832808
+print( "Accuracy of Logistic Regression: {}".format(metrics.accuracy_score(y_test,y_pred)) ) # 0.971608832808
 
 #####################################################
 #	                                                 #
@@ -86,9 +86,9 @@ y_pred = classifier.predict(X_test)
 from sklearn.metrics import confusion_matrix
 cm = confusion_matrix(y_test, y_pred) 
 
-#------- Calculating the Performance of Logistic Regression
+#------- Calculating the Performance of K-NN
 from sklearn import metrics
-print( "Accuracy: {}".format(metrics.accuracy_score(y_test,y_pred)) ) #0.965299684543
+print( "Accuracy of K-NN: {}".format(metrics.accuracy_score(y_test,y_pred)) ) # 0.965299684543
 
 #####################################################
 #	                                                 #
@@ -96,6 +96,43 @@ print( "Accuracy: {}".format(metrics.accuracy_score(y_test,y_pred)) ) #0.9652996
 #	                                                 #
 #####################################################
 
+# Fitting Kernel SVM to the Training set
+from sklearn.svm import SVC
+classifier = SVC(kernel = 'rbf', random_state = 0)
+classifier.fit(X_train, y_train)
+
+# Predicting the Test set results
+y_pred = classifier.predict(X_test)
+
+# Making the Confusion Matrix
+from sklearn.metrics import confusion_matrix
+cm = confusion_matrix(y_test, y_pred)
+
+#------- Calculating the Performance of Kernel SVM
+from sklearn import metrics
+print( "Accuracy of Kernel SVM: {}".format(metrics.accuracy_score(y_test,y_pred)) ) # 0.9747634069400631
+	 
+#####################################################
+#	                                                 #
+#                       SVM                         #
+#	                                                 #
+#####################################################
+
+# Fitting SVM to the Training set
+from sklearn.svm import SVC
+classifier = SVC(kernel = 'linear', random_state = 0)
+classifier.fit(X_train, y_train)
+
+# Predicting the Test set results
+y_pred = classifier.predict(X_test)
+
+# Making the Confusion Matrix
+from sklearn.metrics import confusion_matrix
+cm = confusion_matrix(y_test, y_pred)
+
+#------- Calculating the Performance of SVM
+from sklearn import metrics
+print( "Accuracy of SVM: {}".format(metrics.accuracy_score(y_test,y_pred)) ) # 0.9747634069400631
 
 #####################################################
 #	                                                 #
