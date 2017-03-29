@@ -3,9 +3,15 @@
 Created on Sun Mar 26 19:05:38 2017
 
 @author: Yuri Gaspar
-"""
 
-#------- Gender Recognition by Voice (https://www.kaggle.com/primaryobjects/voicegender)
+##########################################################
+#	                                                      #
+#              Gender Recognition by Voice               #
+#   (https://www.kaggle.com/primaryobjects/voicegender)  #
+#	                                                      #
+##########################################################
+
+"""
 
 #------- Importing the Libraries 
 import numpy as np
@@ -16,6 +22,53 @@ import pandas as pd
 #------ Importing the DataSet and Separating the Independent and Dependent Variables
 dataset = pd.read_csv('voice.csv')
 dataset.corr()
+dataset.head()
+
+#####################################################
+#	                                                 #
+#        Taking out some Plots of our Dataset       #
+#	                                                 #
+#####################################################
+
+#------ Pearson Correlation Heatmap
+import seaborn as sns
+colormap = plt.cm.viridis
+plt.figure(figsize=(10,10))
+plt.title('Pearson Correlation', y=1.05, size=15)
+plt.yticks(rotation=0)
+plt.xticks(rotation=90)
+sns.heatmap(dataset.iloc[:,:-1].astype(float).corr(), linewidths=0.3, vmax=1.0, square=True, cmap="YlGnBu", linecolor='black', annot=True, annot_kws={"size": 7})
+
+#------Scatter plot of given features
+# We can compare other features by simply change "meanfun" and "meanfreq"
+sns.FacetGrid(dataset, hue="label", size=5)\
+   .map(plt.scatter, "meanfun", "meanfreq")\
+   .add_legend()
+plt.show()
+
+#------Boxplot
+#We can visualize other features by substituting "meanfun"
+sns.boxplot(x="label",y="meanfun",data=dataset)
+plt.show()
+
+#Distribution of male and female(every feature)
+sns.FacetGrid(dataset, hue="label", size=6) \
+   .map(sns.kdeplot, "meanfun") \
+   .add_legend()
+plt.show()
+
+#Radviz circle 
+#Good to compare every feature
+from pandas.tools.plotting import radviz
+radviz(dataset, "label")
+plt.show()
+
+#####################################################
+#	                                                 #
+#        Starting with Sets and Pre-Processing      #
+#	                                                 #
+#####################################################
+
 # Getting all Columns, except the last one with the genders
 X = dataset.iloc[:, : -1].values
 # Getting the last column
@@ -28,6 +81,8 @@ y = dataset.iloc[:, 20].values
 #------ Checking the Number of Male and Females
 print("Number of Males {}".format(dataset[dataset.label == 'male'].shape[0])) # shape returns the dimensions of the array. If Y has n rows and m columns, then Y.shape is (n,m). So Y.shape[0] is n. 
 print("Number of Females {}".format(dataset[dataset.label == 'female'].shape[0]))
+# If we don´t know the labels or are too many, we can use 'dataset["label"].value_counts()'
+
 
 #------ Encoding Categorical Data of the Dependent Variable
 # male -> 1
@@ -90,9 +145,33 @@ cm = confusion_matrix(y_test, y_pred)
 from sklearn import metrics
 print( "Accuracy of K-NN: {}".format(metrics.accuracy_score(y_test,y_pred)) ) # 0.965299684543
 
+	 
 #####################################################
 #	                                                 #
-#                    Kernel SVM                     #
+#                Kernel SVM - Default               #
+#	                                                 #
+#####################################################
+
+# Fitting Kernel SVM to the Training set
+from sklearn.svm import SVC
+classifier = SVC(random_state = 0)
+classifier.fit(X_train, y_train)
+
+# Predicting the Test set results
+y_pred = classifier.predict(X_test)
+
+# Making the Confusion Matrix
+from sklearn.metrics import confusion_matrix
+cm = confusion_matrix(y_test, y_pred)
+
+#------- Calculating the Performance of Kernel SVM
+from sklearn import metrics
+print( "Accuracy of Kernel SVM - Default: {}".format(metrics.accuracy_score(y_test,y_pred)) ) # 0.9747634069400631
+ 
+	 
+#####################################################
+#	                                                 #
+#                  Kernel SVM - RBF                 #
 #	                                                 #
 #####################################################
 
@@ -110,11 +189,11 @@ cm = confusion_matrix(y_test, y_pred)
 
 #------- Calculating the Performance of Kernel SVM
 from sklearn import metrics
-print( "Accuracy of Kernel SVM: {}".format(metrics.accuracy_score(y_test,y_pred)) ) # 0.9747634069400631
+print( "Accuracy of Kernel SVM - RBF: {}".format(metrics.accuracy_score(y_test,y_pred)) ) # 0.9747634069400631
 	 
 #####################################################
 #	                                                 #
-#                       SVM                         #
+#                 Kernel SVM - Linear               #
 #	                                                 #
 #####################################################
 
@@ -132,7 +211,7 @@ cm = confusion_matrix(y_test, y_pred)
 
 #------- Calculating the Performance of SVM
 from sklearn import metrics
-print( "Accuracy of SVM: {}".format(metrics.accuracy_score(y_test,y_pred)) ) # 0.9747634069400631
+print( "Accuracy of Kernel SVM - Linear: {}".format(metrics.accuracy_score(y_test,y_pred)) ) # 0.9747634069400631
 
 #####################################################
 #	                                                 #
@@ -153,4 +232,6 @@ print( "Accuracy of SVM: {}".format(metrics.accuracy_score(y_test,y_pred)) ) # 0
 #            Random Forest Classification           #
 #	                                                 #
 #####################################################
+
+
 
